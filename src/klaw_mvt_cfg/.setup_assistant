@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: klaw_description
+    relative_path: urdf/klaw.xacro
+  srdf:
+    relative_path: config/klaw.srdf
+  package_settings:
+    author_name: KolKemboi
+    author_email: kolkemboi@gmail.com
+    generated_timestamp: 1763845712
