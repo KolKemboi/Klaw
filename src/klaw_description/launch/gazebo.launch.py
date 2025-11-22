@@ -8,6 +8,7 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 
+from launch.actions import ExecuteProcess
 
 def generate_launch_description():
     share_dir = get_package_share_directory('klaw_description')
@@ -40,7 +41,7 @@ def generate_launch_description():
             ])
         ]),
         launch_arguments={
-            'pause': 'true'
+            'pause': 'false'
         }.items()
     )
 
@@ -64,10 +65,29 @@ def generate_launch_description():
         output='screen'
     )
 
+    load_joint_state_broadcaster = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller',
+             '--set-state', 'active', 'joint_state_broadcaster'],
+        output='screen')
+
+    load_klaw_trajectory_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state',
+             'active', 'Klaw_controller'],
+        output='screen')
+
+    load_gripper_trajectory_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state',
+             'active', 'Gripper_controller'],
+        output='screen')
+
     return LaunchDescription([
         robot_state_publisher_node,
         joint_state_publisher_node,
         gazebo_server,
         gazebo_client,
         urdf_spawn_node,
+        load_joint_state_broadcaster,
+        load_klaw_trajectory_controller,
+        load_gripper_trajectory_controller,
+
     ])
