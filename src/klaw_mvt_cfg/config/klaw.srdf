@@ -31,12 +31,20 @@
         <joint name="joint_5" value="0"/>
         <joint name="joint_6" value="0"/>
     </group_state>
-    <group_state name="Random" group="Klaw">
+    <group_state name="Turned" group="Klaw">
+        <joint name="joint_1" value="3.1415"/>
+        <joint name="joint_2" value="0"/>
+        <joint name="joint_3" value="0"/>
+        <joint name="joint_4" value="0"/>
+        <joint name="joint_5" value="0"/>
+        <joint name="joint_6" value="0"/>
+    </group_state>
+    <group_state name="Flexxed" group="Klaw">
         <joint name="joint_1" value="1.753"/>
-        <joint name="joint_2" value="-2.0654"/>
-        <joint name="joint_3" value="2.3084"/>
-        <joint name="joint_4" value="1.4753"/>
-        <joint name="joint_5" value="1.5447"/>
+        <joint name="joint_2" value="-2.0307"/>
+        <joint name="joint_3" value="2.7597"/>
+        <joint name="joint_4" value="1.9613"/>
+        <joint name="joint_5" value="2.1348"/>
         <joint name="joint_6" value="0"/>
     </group_state>
     <group_state name="Closed" group="Gripper">
@@ -44,11 +52,9 @@
         <joint name="gripper_2" value="0"/>
     </group_state>
     <group_state name="Open" group="Gripper">
-        <joint name="gripper_1" value="-1.3022"/>
-        <joint name="gripper_2" value="-1.3379"/>
+        <joint name="gripper_1" value="-0.9633"/>
+        <joint name="gripper_2" value="-0.9811"/>
     </group_state>
-    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="Gripper" parent_link="gripper" group="Gripper"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="base_link" link2="link_1_1" reason="Adjacent"/>
     <disable_collisions link1="base_link" link2="link_2_1" reason="Never"/>

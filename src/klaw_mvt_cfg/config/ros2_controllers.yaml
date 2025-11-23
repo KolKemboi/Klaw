@@ -24,15 +24,17 @@ Klaw_controller:
       - joint_5
       - joint_6
     command_interfaces:
-      []
+      - position
     state_interfaces:
-      []
+      - position
+      - velocity
 Gripper_controller:
   ros__parameters:
     joints:
       - gripper_1
       - gripper_2
     command_interfaces:
-      []
+      - position
     state_interfaces:
-      []
+      - position
+      - velocity

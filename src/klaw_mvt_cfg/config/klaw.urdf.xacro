@@ -9,6 +9,6 @@
     <xacro:include filename="klaw.ros2_control.xacro" />
 
 
-    <xacro:klaw_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+    <!-- <xacro:klaw_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/> -->
 
 </robot>
