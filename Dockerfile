@@ -1,16 +1,16 @@
-from osrf/ros:humble-desktop-full
-#base image
+FROM osrf/ros:humble-desktop-full
+# base image
 
-env debian_frontend=noninteractive
-env ros_distro=humble
-#prevents apt prompts
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ROS_DISTRO=humble
+# prevents apt prompts
 
-arg username=kol
-arg user_uid=1000
-arg user_gid=1000
+ARG USERNAME=kol
+ARG USER_UID=1000
+ARG USER_GID=1000
 
-#stuff ill need for deving,
-run apt-get update && apt-get install -y \
+# ---- system deps ----
+RUN apt-get update && apt-get install -y \
     git \
     curl \
     wget \
@@ -33,54 +33,57 @@ run apt-get update && apt-get install -y \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
-#creating a non-root usr
-run groupadd --gid ${ user_gid } ${ username } \
-	&& useradd --uid ${ user_uid } --gid ${ user_gid } -m ${ username } \
-	$$ echo "${ username } all=(all) nopasswd:all" > /etc/sudoers.d/${ username }
-	$$ chmod 0440 /etc/sudoers.d/${ username }
+# ---- non-root user ----
+RUN groupadd --gid ${USER_GID} ${USERNAME} \
+    && useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} \
+    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME}
 
-run rosdep init || true
-run rosdep update
+# ---- rosdep ----
+RUN rosdep init || true
+RUN rosdep update
 
-#ros2 humble stuff
-run apt-get update && apt-get install -y \
+# ---- MoveIt + ros2_control ----
+RUN apt-get update && apt-get install -y \
     ros-humble-moveit \
     ros-humble-moveit-visual-tools \
     ros-humble-moveit-planners-ompl \
     ros-humble-moveit-ros-control-interface \
     ros-humble-ros2-control \
     ros-humble-ros2-controllers \
+		ros-humble-joint-state-publisher-gui \
     ros-humble-controller-manager \
     ros-humble-joint-state-broadcaster \
     ros-humble-joint-trajectory-controller \
     && rm -rf /var/lib/apt/lists/*
 
-#latest nvim
-run curl -lo https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz \
-    && tar -c /opt -xzf nvim-linux64.tar.gz \
-    && ln -s /opt/nvim-linux64/bin/nvim /usr/local/bin/nvim \
-    && rm nvim-linux64.tar.gz
+# ---- Neovim 0.9 via PPA ----
+RUN apt-get update && apt-get install -y software-properties-common \
+    && add-apt-repository -y ppa:neovim-ppa/stable \
+    && apt-get update && apt-get install -y neovim \
+    && rm -rf /var/lib/apt/lists/*
 
-run git clone https://github.com/nvim-lua/kickstart.nvim.git \
-    /home/${username}/.config/nvim \
-    && chown -r ${username}:${username} /home/${username}/.config
+# ---- Kickstart.nvim ----
+RUN git clone https://github.com/nvim-lua/kickstart.nvim.git \
+    /home/${USERNAME}/.config/nvim \
+    && chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.config
 
+# ---- colcon defaults ----
+RUN mkdir -p /home/${USERNAME}/.colcon && \
+    printf '{\n  "build": {\n    "symlink-install": true,\n    "cmake-args": ["-DCMAKE_BUILD_TYPE=Release"]\n  }\n}\n' \
+    > /home/${USERNAME}/.colcon/defaults.yaml && \
+    chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.colcon
 
-run mkdir -p /home/${username}/.colcon && \
-    printf '{\n  "build": {\n    "symlink-install": true,\n    "cmake-args": ["-dcmake_build_type=release"]\n  }\n}\n' \
-    > /home/${username}/.colcon/defaults.yaml && \
-    chown -r ${username}:${username} /home/${username}/.colcon
+# ---- workspace ----
+RUN mkdir -p /home/${USERNAME}/ws/src \
+    && chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/ws
 
+WORKDIR /home/${USERNAME}/ws
 
-run mkdir -p /home/${username}/ws/src \
-    && chown -r ${username}:${username} /home/${username}/ws
+# ---- bash env ----
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/${USERNAME}/.bashrc \
+    && echo "source ~/ws/install/setup.bash 2>/dev/null" >> /home/${USERNAME}/.bashrc \
+    && chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.bashrc
 
-workdir /home/${username}/ws
-
-
-run echo "source /opt/ros/humble/setup.bash" >> /home/${username}/.bashrc \
-    && echo "source ~/ws/install/setup.bash 2>/dev/null" >> /home/${username}/.bashrc \
-    && chown ${username}:${username} /home/${username}/.bashrc
-
-
--v $(pwd)/ws:/home/kol/ws
+# ---- switch user ----
+USER ${USERNAME}
