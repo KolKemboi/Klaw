@@ -11,6 +11,7 @@ Klaw adds a gripper in its default config unlike the original Welder.
 
 <h3>Welder Robot</h3>
 
+
 Below is the ancestor of the current config, the welder. 
 Welder is still in continuous development and improvement.
 
