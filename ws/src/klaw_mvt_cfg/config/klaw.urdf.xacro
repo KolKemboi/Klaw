@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="klaw">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import klaw urdf file -->
+    <xacro:include filename="$(find klaw_description)/urdf/klaw.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="klaw.ros2_control.xacro" />
+
+
+    <xacro:klaw_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

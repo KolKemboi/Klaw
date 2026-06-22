@@ -2,7 +2,6 @@
 <robot name="klaw" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <xacro:include filename="$(find klaw_description)/urdf/klaw.trans" />
-<xacro:include filename="$(find klaw_description)/urdf/klaw.gazebo" />
 <xacro:include filename="$(find klaw_description)/urdf/ros2_control.xacro" />
 
 
